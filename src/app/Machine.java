@@ -9,12 +9,11 @@ public class Machine {
     static double coilerMaxReduction, avgMaxReduction;
     String machineName;
 
-    public void setupMachine() throws Exception {
+    public void setupMachine(String machineID) throws Exception {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xpath = xpf.newXPath();
         InputSource xml = new InputSource("machines.xml");
 
-        String machineID = "11";
 
         // Get the machine name
         String xmlQueryPath = "/facility/machine[@id='" + machineID + "']/name";

@@ -1,4 +1,10 @@
-<facility>
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE facility [
+		<!ENTITY maxReduction "22">
+		]>
+
+<facility xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<machine id="11">
 		<name>Machine 11</name>
 		<numHeads>5</numHeads>
@@ -7,33 +13,33 @@
 		<taper></taper>
 		<head id="0">
 			<diameter>26</diameter>
-			<maxReduction>26</maxReduction>
+			<maxReduction>&maxReduction;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="1">
 			<diameter>26</diameter>
-			<maxReduction>26</maxReduction>
+			<maxReduction>&maxReduction;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="2">
 			<diameter>26</diameter>
-			<maxReduction>26</maxReduction>
+			<maxReduction>&maxReduction;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="3">
 			<diameter>26</diameter>
-			<maxReduction>26</maxReduction>
+			<maxReduction>&maxReduction;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="4">
 			<diameter>26</diameter>
-			<maxReduction>26</maxReduction>
+			<maxReduction>&maxReduction;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<coiler>
 			<hasDie>true</hasDie>
 			<diameter>26</diameter>
-			<maxReduction>12</maxReduction>
+			<maxReduction>11</maxReduction>
 		</coiler>
 	</machine>
 	<machine id="14">
