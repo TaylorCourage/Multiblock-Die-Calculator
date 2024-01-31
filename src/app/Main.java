@@ -1,14 +1,14 @@
 package app;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         double startSize = 216;
         double finishSize = 107;
         double preFinishSize;
         int numDies = 1;
 
         Machine machine = new Machine();
-        machine.setupMachine(5);
+        machine.setupMachine();
 
 
         if (machine.hasCoiler) {

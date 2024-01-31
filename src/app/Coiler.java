@@ -1,11 +1,11 @@
 package app;
 
 public class Coiler {
-    double maxReduction = 10;
-    int diameter = 26;
+    double maxReduction;
+    int diameter;
 
-    public void editCoiler(double reduction, int diameter){
-        this.maxReduction = reduction;
+    Coiler (int diameter, double maxReduction){
+        this.maxReduction = maxReduction;
         this.diameter = diameter;
     }
 }

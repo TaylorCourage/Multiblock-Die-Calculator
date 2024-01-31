@@ -1,0 +1,86 @@
+<facility>
+	<machine id="11">
+		<name>Machine 11</name>
+		<numHeads>5</numHeads>
+		<hasCoiler>true</hasCoiler>
+		<tapered>false</tapered>
+		<taper></taper>
+		<head id="0">
+			<diameter>26</diameter>
+			<maxReduction>26</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="1">
+			<diameter>26</diameter>
+			<maxReduction>26</maxReduction>
+			<isTogglable>false</isTogglable>
+		</head>
+		<head id="2">
+			<diameter>26</diameter>
+			<maxReduction>26</maxReduction>
+			<isTogglable>false</isTogglable>
+		</head>
+		<head id="3">
+			<diameter>26</diameter>
+			<maxReduction>26</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="4">
+			<diameter>26</diameter>
+			<maxReduction>26</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<coiler>
+			<hasDie>true</hasDie>
+			<diameter>26</diameter>
+			<maxReduction>12</maxReduction>
+		</coiler>
+	</machine>
+	<machine id="14">
+		<name>Machine 14</name>
+		<numHeads>7</numHeads>
+		<hasCoiler>true</hasCoiler>
+		<tapered>true</tapered>
+		<taper>3</taper>
+		<head id="0">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="1">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>false</isTogglable>
+		</head>
+		<head id="2">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>false</isTogglable>
+		</head>
+		<head id="3">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="4">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="5">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<head id="6">
+			<diameter>22</diameter>
+			<maxReduction>30</maxReduction>
+			<isTogglable>true</isTogglable>
+		</head>
+		<coiler>
+			<hasDie>true</hasDie>
+			<diameter>26</diameter>
+			<maxReduction>11</maxReduction>
+		</coiler>
+	</machine>
+</facility>
