@@ -24,13 +24,18 @@ public class MathFunctions {
     }
 
     public static double getCoilerReduction(double finalSize) {
-        double reduction, d = 0.001; // d is number of steps (in thousandths of an inch) in diameter of the wire between final block and coiler
+        double reduction, d = 0; // d is number of steps (in thousandths of an inch) in diameter of the wire between final block and coiler
         reduction = getReduction((finalSize + d), finalSize);
         while (reduction < Machine.coilerMaxReduction) {
+            d++;
+            double temp = finalSize + d;
             reduction = getReduction((finalSize + d), finalSize);
-            d += 0.001;
         }
-
-        return finalSize + d;
+        if (reduction > Machine.coilerMaxReduction) {
+            d--;
+            return finalSize + d;
+        } else {
+            return finalSize + d;
+        }
     }
 }

@@ -2,14 +2,15 @@ package app;
 
 public class Head {
     int headDiameter;
-    boolean isCoiler, isToggleable;
-    float maxReduction;
+    boolean isToggleable;
+    double maxReduction;
 
 
-    public void createHead() {
-        headDiameter = 26;
-        isCoiler = false;
-        isToggleable = true;
-        maxReduction = 25.0f;
+
+    Head (int diameter, double maxReduction, boolean isToggleable) {
+        this.headDiameter = diameter;
+        this.isToggleable = isToggleable;
+        this.maxReduction = maxReduction;
     }
+
 }
