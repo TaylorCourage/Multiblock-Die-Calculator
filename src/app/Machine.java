@@ -11,6 +11,8 @@ public class Machine {
     static double coilerMaxReduction, avgMaxReduction;
     String machineName;
 
+    String[][] machineList;
+
     public void setupMachine(String machineID, XPath xpath, InputSource xml) throws Exception {
         // Get the machine name
         String xmlQueryPath = "/facility/machine[@id='" + machineID + "']/name";
@@ -72,22 +74,33 @@ public class Machine {
         }
     }
 
-
+    // This method searches the XML file and grabs a list of all machines and associated IDs
     public void getMachines (XPath xpath, InputSource xml) throws Exception {
         String xmlQueryPath = "/facility/machine";
         NodeList data = (NodeList)xpath.evaluate(xmlQueryPath, xml, XPathConstants.NODESET);
-        System.out.println("These machines are currently available:");
-        String[][] returnData = new String[data.getLength()][2];
+        machineList = new String[data.getLength()][2];
         for (int i = 0; i < data.getLength(); i++) {
             Element element = (Element) data.item(i);
             String id = element.getAttribute("id");
             String mcName = element.getElementsByTagName("name").item(0).getTextContent();
-            System.out.println("ID#: " + id + " - Name: " + mcName);
-            returnData[i][0] = id;
-            returnData[i][1] = mcName;
+            machineList[i][0] = id;
+            machineList[i][1] = mcName;
         }
-        //return returnData;
     }
 
+    public boolean checkIfExists(XPath xpath, InputSource xml, String machineID) throws Exception {
+        try {
+            String xmlQueryPath = "/facility/machine[@id=" + machineID + "]";
+            String result = (String)xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
+            System.out.println(result);
+            if (result.isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 }

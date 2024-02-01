@@ -25,9 +25,23 @@ public class Main {
 
         System.out.println("Welcome to the multiblock die calculator!");
         machine.getMachines(xpath, xml);
+        System.out.println("These machines are currently available:");
+        for (int i = 0; i < machine.machineList.length; i++) {
+            System.out.println("ID: " + machine.machineList[i][0] + " -- Name: " + machine.machineList[i][1]);
+        }
         System.out.println("Please enter the ID of the machine you are using today.");
         String machineID = userInput.nextLine();
 
+
+        // Check if the machine being asked for actually exists
+        Boolean machineExists = machine.checkIfExists(xpath, xml, machineID);
+        while (!machineExists) {
+            System.out.println("That machine does not appear to exist! Please check your config file or your input and try again");
+            System.out.println("Please enter the ID of the machine you are using today.");
+            machineID = userInput.nextLine();
+            machineExists = machine.checkIfExists(xpath, xml, machineID);
+            System.out.println(machineExists);
+        }
         machine.setupMachine(machineID, xpath, xml);
 
         System.out.println("Please enter your starting diameter, in inches (e.g. .216)");
@@ -62,7 +76,7 @@ public class Main {
             if (reduction < machine.avgMaxReduction) {
                 System.out.println("Dies required based on parameters: " + numDies);
                 if (numDies > machine.numHeads) {
-                    System.out.println("Too many dies to meet parameters! Are you sure your parameters are correct?");
+                    System.out.println("Warning! Setup outside set machine parameters! Are you sure your settings are correct?");
                     System.out.println("Temporarily overriding to display a possible setup.");
                     numDies--;
                     reduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
