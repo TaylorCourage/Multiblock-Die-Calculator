@@ -1,5 +1,7 @@
 package app;
 import javax.xml.xpath.*;
+
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
 public class Machine {
@@ -9,12 +11,7 @@ public class Machine {
     static double coilerMaxReduction, avgMaxReduction;
     String machineName;
 
-    public void setupMachine(String machineID) throws Exception {
-        XPathFactory xpf = XPathFactory.newInstance();
-        XPath xpath = xpf.newXPath();
-        InputSource xml = new InputSource("machines.xml");
-
-
+    public void setupMachine(String machineID, XPath xpath, InputSource xml) throws Exception {
         // Get the machine name
         String xmlQueryPath = "/facility/machine[@id='" + machineID + "']/name";
         this.machineName = (String)xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
@@ -74,4 +71,23 @@ public class Machine {
             System.out.println("Setting up coiler with diameter " + coiler.diameter + "\". Maximum ROA: " + coilerMaxReduction + "%");
         }
     }
+
+
+    public void getMachines (XPath xpath, InputSource xml) throws Exception {
+        String xmlQueryPath = "/facility/machine";
+        NodeList data = (NodeList)xpath.evaluate(xmlQueryPath, xml, XPathConstants.NODESET);
+        System.out.println("These machines are currently available:");
+        String[][] returnData = new String[data.getLength()][2];
+        for (int i = 0; i < data.getLength(); i++) {
+            Element element = (Element) data.item(i);
+            String id = element.getAttribute("id");
+            String mcName = element.getElementsByTagName("name").item(0).getTextContent();
+            System.out.println("ID#: " + id + " - Name: " + mcName);
+            returnData[i][0] = id;
+            returnData[i][1] = mcName;
+        }
+        //return returnData;
+    }
+
+
 }

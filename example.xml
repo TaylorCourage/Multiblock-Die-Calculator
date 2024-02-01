@@ -37,7 +37,6 @@
 			<isTogglable>true</isTogglable>
 		</head>
 		<coiler>
-			<hasDie>true</hasDie>
 			<diameter>26</diameter>
 			<maxReduction>11</maxReduction>
 		</coiler>
@@ -84,7 +83,6 @@
 			<isTogglable>true</isTogglable>
 		</head>
 		<coiler>
-			<hasDie>true</hasDie>
 			<diameter>26</diameter>
 			<maxReduction>11</maxReduction>
 		</coiler>

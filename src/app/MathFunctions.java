@@ -1,6 +1,7 @@
 package app;
 
 public class MathFunctions {
+    // This class was created to break the complicated math of the program out into their own class
     public static double getReduction (double initialSize, double finalSize) {
         double initialArea = Math.PI * ((initialSize / 2) * (initialSize / 2));
         double finalArea = Math.PI * ((finalSize / 2) * (finalSize / 2));
@@ -8,15 +9,15 @@ public class MathFunctions {
     }
 
     public static double[] getDieSize(double reduction, double finishSize, int numDies) {
-        double[] variable = new double[numDies];
-        variable[0] = finishSize / Math.sqrt(1 - (reduction / 100));
+        double[] die = new double[numDies];
+        die[0] = finishSize / Math.sqrt(1 - (reduction / 100));
         for (int i = 1; i < numDies; i++) {
-            variable[i] = variable[i - 1] / Math.sqrt(1 - (reduction / 100));
+            die[i] = die[i - 1] / Math.sqrt(1 - (reduction / 100));
         }
         for (int i = 0; i < numDies; i++) {
-            variable[i] = Math.round(variable[i]);
+            die[i] = Math.round(die[i]);
         }
-        return variable;
+        return die;
     }
 
     public static double getAverageReduction(double initialSize, double finalSize, int numDies) {
