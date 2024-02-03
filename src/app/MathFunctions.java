@@ -8,9 +8,9 @@ public class MathFunctions {
         return ((initialArea - finalArea) / initialArea) * 100;
     }
 
-    public static double[] getDieSize(double reduction, double finishSize, int numDies) {
+    public static double[] getDieSize(double reduction, double preFinishSize, int numDies) {
         double[] die = new double[numDies];
-        die[0] = finishSize / Math.sqrt(1 - (reduction / 100));
+        die[0] = preFinishSize / Math.sqrt(1 - (reduction / 100));
         for (int i = 1; i < numDies; i++) {
             die[i] = die[i - 1] / Math.sqrt(1 - (reduction / 100));
         }
@@ -29,14 +29,18 @@ public class MathFunctions {
         reduction = getReduction((finalSize + d), finalSize);
         while (reduction < Machine.coilerMaxReduction) {
             d++;
-            double temp = finalSize + d;
             reduction = getReduction((finalSize + d), finalSize);
         }
         if (reduction > Machine.coilerMaxReduction) {
             d--;
-            return finalSize + d;
-        } else {
-            return finalSize + d;
         }
+        return finalSize + d;
+    }
+
+    public static double getTotalReduction(double startSize, double finishSize){
+        double totalROA = MathFunctions.getReduction(startSize, finishSize); // Get total reduction of area
+        totalROA = Math.round(totalROA * 100.0) / 100.0; // Round to 2 decimals
+        System.out.println("Total reduction of area: " + totalROA + "%");
+        return totalROA;
     }
 }
