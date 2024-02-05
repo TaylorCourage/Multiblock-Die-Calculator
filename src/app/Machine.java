@@ -102,11 +102,9 @@ public class Machine {
                     numDies--;
                     reduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
                     reduction = Math.round(reduction * 100.0) / 100.0; // Round to 2 decimals
-                    System.out.println("Average reduction across " + numDies + " dies: " + reduction + "%");
                     break;
                 }
                 reduction = Math.round(reduction * 100.0) / 100.0; // Round to 2 decimals
-                System.out.println("Average reduction across " + numDies + " dies: " + reduction + "%");
             }
         }
         return numDies;

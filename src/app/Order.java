@@ -56,7 +56,7 @@ public class Order extends GUI {
         sizes[sizes.length - 1] = startSize;
 
         // Find the total reduction of the machine section
-        double totalROA = MathFunctions.getTotalReduction(startSize, finishSize);
+        double totalROA = MathFunctions.getReduction(startSize, finishSize);
 
         double avgReduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
 
@@ -65,7 +65,6 @@ public class Order extends GUI {
         coilerReduction = Math.round(coilerReduction * 100.0) / 100.0;
         preFinishSize = Math.round(preFinishSize);
 
-        System.out.println("Fin: " + (sizes[0] / 1000) + ", ROA: " + coilerReduction + "%");
         double[] dies = MathFunctions.getDieSize(avgReduction, preFinishSize, numDies);
         double roa = MathFunctions.getReduction(dies[0], preFinishSize);
         roa = Math.round(roa * 100.0) / 100.0;
@@ -73,29 +72,16 @@ public class Order extends GUI {
         roas[0] = coilerReduction;
         roas[1] = roa;
 
-
-        // So this little section is the total number of sizes that the material will see, including start and finish size
-        int orderSizeCount = dies.length; // Use this to display head/block number with our die
-        if (machine.hasCoiler) {
-            orderSizeCount++;
-        }
-
-        //System.out.println("Size " + orderSizeCount + ": " + (preFinishSize / 1000) + ", ROA: " + roa + "%");
-
-        //double[] order = new double[];
+        elongs[0] = MathFunctions.getElongation(preFinishSize, finishSize);
 
         for (int i = 0; i < dies.length; i++) {
             sizes[i + 2] = dies[i];
             roa = MathFunctions.getReduction(sizes[i + 2], sizes[i + 1]);
             roa = Math.round(roa * 100.0) / 100.0;
-            System.out.println("ROA ---- " + roa);
+            double elong = MathFunctions.getElongation(sizes[i + 2], sizes[i + 1]);
             roas[i + 2] = roa;
+            elongs[i + 2] = elong;
             //dies[i] = dies[i] / 1000;
-            System.out.println("Size: " + dies[i] + "...");
         }
-        //System.out.println("Start: " + (startSize / 1000));
     }
-    //GUI.drawMachine(machine, order.sizes);
-
-
 }

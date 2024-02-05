@@ -124,6 +124,7 @@ public class GUI extends JFrame implements ActionListener  {
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
+                headPanel.add(new JLabel("  "));  // A spacer
                 contentPanel.add(headPanel);
                 // HORIZONTAL SPACER
                 JPanel spacer = new JPanel();
@@ -136,6 +137,7 @@ public class GUI extends JFrame implements ActionListener  {
                     JLabel dieLabel = new JLabel(new ImageIcon(die));
                     JLabel dieDisplay = new JLabel(String.format("%.3f", (dies[i] / 1000)), SwingConstants.CENTER);
                     JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[i + 1]) + "%", SwingConstants.CENTER);
+                    JLabel elongationDisplay = new JLabel(String.format("%.2f", Order.elongs[i + 1]) + "%", SwingConstants.CENTER);
                     headPanel.add(dieLabel);
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("Die:"));
@@ -145,7 +147,7 @@ public class GUI extends JFrame implements ActionListener  {
                     headPanel.add(roaDisplay);
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("Elong:"));
-                    //coilerPanel.add(elongationDisplay);
+                    headPanel.add(elongationDisplay);
                 } catch (IOException e) {
                     System.out.println("ERROR Image not found (die)");
                 }
@@ -173,7 +175,8 @@ public class GUI extends JFrame implements ActionListener  {
                 die = ImageIO.read(new File("graphics/coiler.png"));
                 JLabel dieLabel = new JLabel(new ImageIcon(die));
                 JLabel dieDisplay = new JLabel(String.format("%.3f", (Order.sizes[0] / 1000)), SwingConstants.CENTER);
-                JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[0]), SwingConstants.CENTER);
+                JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[0]) + "%", SwingConstants.CENTER);
+                JLabel elongationDisplay = new JLabel(String.format("%.2f", Order.elongs[0]) + "%", SwingConstants.CENTER);
                 coilerPanel.add(dieLabel);
                 coilerPanel.add(new JLabel("  "));  // A spacer
                 coilerPanel.add(new JLabel("Die:"));
@@ -183,7 +186,7 @@ public class GUI extends JFrame implements ActionListener  {
                 coilerPanel.add(roaDisplay);
                 coilerPanel.add(new JLabel("  "));  // A spacer
                 coilerPanel.add(new JLabel("Elong:"));
-                //coilerPanel.add(elongationDisplay);
+                coilerPanel.add(elongationDisplay);
 
             } catch (IOException e) {
                 System.out.println("ERROR Image not found (coiler)");

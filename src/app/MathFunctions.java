@@ -8,6 +8,10 @@ public class MathFunctions {
         return ((initialArea - finalArea) / initialArea) * 100;
     }
 
+    public static double getElongation (double initialSize, double finalSize) {
+        return (Math.pow(initialSize / finalSize, 2) - 1) * 100;
+    }
+
     public static double[] getDieSize(double reduction, double preFinishSize, int numDies) {
         double[] die = new double[numDies];
         die[0] = preFinishSize / Math.sqrt(1 - (reduction / 100));
@@ -35,12 +39,5 @@ public class MathFunctions {
             d--;
         }
         return finalSize + d;
-    }
-
-    public static double getTotalReduction(double startSize, double finishSize){
-        double totalROA = MathFunctions.getReduction(startSize, finishSize); // Get total reduction of area
-        totalROA = Math.round(totalROA * 100.0) / 100.0; // Round to 2 decimals
-        System.out.println("Total reduction of area: " + totalROA + "%");
-        return totalROA;
     }
 }
