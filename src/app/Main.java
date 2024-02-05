@@ -43,7 +43,7 @@ public class Main {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-        System.out.println(order.sizes.length);
         gui.drawMachine(machine, order.sizes);
+        gui.guiResize(order.sizes.length);
     }
 }

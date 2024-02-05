@@ -12,7 +12,6 @@ public class Machine {
     String machineName;
 
     String[][] machineList;
-    double[] sizes;
 
     public void setupMachine(String machineID, XPath xpath, InputSource xml) throws Exception {
         // Get the machine name
@@ -88,28 +87,15 @@ public class Machine {
             machineList[i][1] = mcName;
         }
     }
-
-    public boolean checkIfExists(XPath xpath, InputSource xml, String machineID) throws Exception {
-        try {
-            String xmlQueryPath = "/facility/machine[@id=" + machineID + "]";
-            String result = (String)xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
-            return !result.isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public int getDieCount(double startSize, double preFinishSize){
         double reduction = MathFunctions.getReduction(startSize, preFinishSize);
         int numDies = 0;
         // Count how many dies we need
-        dieCount:
         while (reduction > avgMaxReduction) { // THIS WILL NEED TO GET CHANGED TO THE MAX REDUCTION PERCENT OF EACH HEAD
             numDies++;
             reduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
             // Check if we are under our allowed maximum reduction
             if (reduction < avgMaxReduction) {
-                System.out.println("Dies required based on parameters: " + numDies);
                 if (numDies > numHeads) {
                     System.out.println("Warning! Setup outside set machine parameters! Are you sure your settings are correct?");
                     System.out.println("Temporarily overriding to display a possible setup.");
@@ -117,7 +103,7 @@ public class Machine {
                     reduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
                     reduction = Math.round(reduction * 100.0) / 100.0; // Round to 2 decimals
                     System.out.println("Average reduction across " + numDies + " dies: " + reduction + "%");
-                    break dieCount;
+                    break;
                 }
                 reduction = Math.round(reduction * 100.0) / 100.0; // Round to 2 decimals
                 System.out.println("Average reduction across " + numDies + " dies: " + reduction + "%");

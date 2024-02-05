@@ -23,7 +23,7 @@ public class GUI extends JFrame implements ActionListener  {
     static JTextField initSizeInput;
     static JTextField finishSizeInput;
     static int frameWidth;
-    JButton calculate, reset;
+    JButton calculate, help;
     Machine machine;
 
 
@@ -39,7 +39,7 @@ public class GUI extends JFrame implements ActionListener  {
         finishSizeLabel = new JLabel("Finish Size:");
         machinePicker = new JComboBox();
         initSizeInput = new JTextField("0.216");
-        finishSizeInput = new JTextField("0.107");
+        finishSizeInput = new JTextField("0.130");
         this.machine = machine;
 
         // Kill the app when we close the window
@@ -56,14 +56,14 @@ public class GUI extends JFrame implements ActionListener  {
         machinePicker = new JComboBox(result);
 
         calculate = new JButton("Calculate");
-        reset = new JButton("Help");
+        help = new JButton("Help");
 
         // Add things to the frame to display
         //frame.add(b1, BorderLayout.NORTH);
 
         drawControls();
 
-        guiResize(machine.numHeads);
+        frameWidth = 100 + (machine.numHeads * 80);
         frame.setSize(frameWidth,300);
         frame.setVisible(true);
     }
@@ -79,10 +79,10 @@ public class GUI extends JFrame implements ActionListener  {
         controlPanel.add(machinePicker);
         controlPanel.add(initSizeInput);
         controlPanel.add(finishSizeInput);
-        controlPanel.add(reset);
+        controlPanel.add(help);
 
         calculate.addActionListener(this);
-        reset.addActionListener(this);
+        help.addActionListener(this);
         machinePicker.addActionListener(this);
 
         // Set control panel layout
@@ -114,7 +114,7 @@ public class GUI extends JFrame implements ActionListener  {
             if (i == Order.sizes.length - 1) {
                 rodCoil = ImageIO.read(new File("graphics/rod.png"));
                 JLabel rod = new JLabel(new ImageIcon(rodCoil));
-                JLabel rodDisplay = new JLabel(String.valueOf(Order.sizes[Order.sizes.length - 1]), SwingConstants.CENTER);
+                JLabel rodDisplay = new JLabel(String.format("%.3f", Order.sizes[Order.sizes.length - 1] / 1000), SwingConstants.CENTER);
                 headPanel.add(rod);
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("Rod:"));
@@ -133,9 +133,8 @@ public class GUI extends JFrame implements ActionListener  {
             } else {
                 try {
                     die = ImageIO.read(new File("graphics/die.png"));
-                    System.out.println("Die #" + i + ": " + dies[i] + " - Loaded image " + die);
                     JLabel dieLabel = new JLabel(new ImageIcon(die));
-                    JLabel dieDisplay = new JLabel(String.valueOf(dies[i]), SwingConstants.CENTER);
+                    JLabel dieDisplay = new JLabel(String.format("%.3f", (dies[i] / 1000)), SwingConstants.CENTER);
                     JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[i + 1]) + "%", SwingConstants.CENTER);
                     headPanel.add(dieLabel);
                     headPanel.add(new JLabel("  "));  // A spacer
@@ -172,9 +171,8 @@ public class GUI extends JFrame implements ActionListener  {
 
             try {
                 die = ImageIO.read(new File("graphics/coiler.png"));
-                System.out.println("Loaded image " + die);
                 JLabel dieLabel = new JLabel(new ImageIcon(die));
-                JLabel dieDisplay = new JLabel(String.valueOf(Order.sizes[0]), SwingConstants.CENTER);
+                JLabel dieDisplay = new JLabel(String.format("%.3f", (Order.sizes[0] / 1000)), SwingConstants.CENTER);
                 JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[0]), SwingConstants.CENTER);
                 coilerPanel.add(dieLabel);
                 coilerPanel.add(new JLabel("  "));  // A spacer
@@ -201,7 +199,6 @@ public class GUI extends JFrame implements ActionListener  {
     public void actionPerformed(ActionEvent e)  {
         System.out.println("Action happened!");
         if (e.getSource() == this.calculate) {
-            System.out.println("Calculate");
             Order.createOrder(machine);
             guiResize(Order.sizes.length);
             try {
@@ -209,8 +206,8 @@ public class GUI extends JFrame implements ActionListener  {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        } else if (e.getSource() == this.reset) {
-            System.out.println("RESET");
+        } else if (e.getSource() == this.help) {
+            helpWindow();
         } else {
             System.out.println("Machine change");
             System.out.println(machinePicker.getSelectedItem().toString());
@@ -245,5 +242,11 @@ public class GUI extends JFrame implements ActionListener  {
         }
         System.out.println("This is an error that shouldn't happen");
         return "0";
+    }
+
+    public void helpWindow() {
+        JFrame helpFrame = new JFrame("Die Calculator Help");
+        helpFrame.setSize(200, 200);
+        helpFrame.setVisible(true);
     }
 }
