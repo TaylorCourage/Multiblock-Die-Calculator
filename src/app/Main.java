@@ -10,9 +10,6 @@ public class Main {
     GUI gui;
     Machine machine;
     public static void main(String[] args) throws Exception {
-        double startSize, finishSize, preFinishSize;  // The preFinishSize is used when we have a coiler with a die
-
-
         // Create the machine object
         Machine machine = new Machine();
         // Create GUI object

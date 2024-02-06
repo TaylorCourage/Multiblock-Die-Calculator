@@ -26,6 +26,10 @@ public class GUI extends JFrame implements ActionListener  {
     JButton calculate, help;
     Machine machine;
 
+    // These next few variables affect the size of our screen
+    static final int BASE_WIDTH = 240;
+    static final int WIDTH_MULTIPLIER = 80;
+    static final int BASE_HEIGHT = 375;
 
     public void setupGUI(Machine machine) throws IOException {
         // Setup GUI objects
@@ -63,8 +67,8 @@ public class GUI extends JFrame implements ActionListener  {
 
         drawControls();
 
-        frameWidth = 100 + (machine.numHeads * 80);
-        frame.setSize(frameWidth,300);
+        frameWidth = BASE_WIDTH + (machine.numHeads * WIDTH_MULTIPLIER);
+        frame.setSize(frameWidth,BASE_HEIGHT);
         frame.setVisible(true);
     }
 
@@ -92,16 +96,15 @@ public class GUI extends JFrame implements ActionListener  {
     }
 
     public void guiResize(int numHeads){
-        frameWidth = 100 + (numHeads * 80);
-        frame.setSize(frameWidth, 300);
+        frameWidth = BASE_WIDTH + (numHeads * WIDTH_MULTIPLIER);
+        frame.setSize(frameWidth, BASE_HEIGHT);
         frame.repaint();
     }
 
     public void drawMachine(Machine machine, double[] dies) throws IOException {
         // This function draws our imaginary machine and shows our results
 
-        BufferedImage die = null;
-        BufferedImage rodCoil = null;
+        BufferedImage image = null;
 
         contentPanel.removeAll();
 
@@ -112,8 +115,8 @@ public class GUI extends JFrame implements ActionListener  {
             headPanel.setLayout(new BoxLayout(headPanel, BoxLayout.Y_AXIS));
 
             if (i == Order.sizes.length - 1) {
-                rodCoil = ImageIO.read(new File("graphics/rod.png"));
-                JLabel rod = new JLabel(new ImageIcon(rodCoil));
+                image = ImageIO.read(new File("graphics/rod.png"));
+                JLabel rod = new JLabel(new ImageIcon(image));
                 JLabel rodDisplay = new JLabel(String.format("%.3f", Order.sizes[Order.sizes.length - 1] / 1000), SwingConstants.CENTER);
                 headPanel.add(rod);
                 headPanel.add(new JLabel("  "));  // A spacer
@@ -133,15 +136,26 @@ public class GUI extends JFrame implements ActionListener  {
                 contentPanel.add(spacer);
             } else {
                 try {
-                    die = ImageIO.read(new File("graphics/die.png"));
-                    JLabel dieLabel = new JLabel(new ImageIcon(die));
+                    image = ImageIO.read(new File("graphics/die.png"));
+                    JLabel dieLabel = new JLabel(new ImageIcon(image));
                     JLabel dieDisplay = new JLabel(String.format("%.3f", (dies[i] / 1000)), SwingConstants.CENTER);
-                    JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[i + 1]) + "%", SwingConstants.CENTER);
+                    JLabel roaDisplay = new JLabel((Order.roas[i + 1]) + "%", SwingConstants.CENTER);
                     JLabel elongationDisplay = new JLabel(String.format("%.2f", Order.elongs[i + 1]) + "%", SwingConstants.CENTER);
                     headPanel.add(dieLabel);
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("Die:"));
                     headPanel.add(dieDisplay);
+                    if (i > Order.sizes.length - 3 /*&& pressureDie = true*/) {
+                        JLabel guideDisplay = new JLabel(String.format("%.3f", (dies[i + 1] + 10) / 1000));
+                        headPanel.add(new JLabel("  "));  // A spacer
+                        headPanel.add(new JLabel("Press. Die:"));
+                        headPanel.add(guideDisplay);
+                    } else {
+                        JLabel guideDisplay = new JLabel(String.format("%.3f", (dies[i + 1] + 20) / 1000));
+                        headPanel.add(new JLabel("  "));  // A spacer
+                        headPanel.add(new JLabel("Guide:"));
+                        headPanel.add(guideDisplay);
+                    }
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("ROA:"));
                     headPanel.add(roaDisplay);
@@ -172,8 +186,8 @@ public class GUI extends JFrame implements ActionListener  {
             JPanel coilerPanel = new JPanel();
 
             try {
-                die = ImageIO.read(new File("graphics/coiler.png"));
-                JLabel dieLabel = new JLabel(new ImageIcon(die));
+                image = ImageIO.read(new File("graphics/coiler.png"));
+                JLabel dieLabel = new JLabel(new ImageIcon(image));
                 JLabel dieDisplay = new JLabel(String.format("%.3f", (Order.sizes[0] / 1000)), SwingConstants.CENTER);
                 JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[0]) + "%", SwingConstants.CENTER);
                 JLabel elongationDisplay = new JLabel(String.format("%.2f", Order.elongs[0]) + "%", SwingConstants.CENTER);
@@ -181,6 +195,14 @@ public class GUI extends JFrame implements ActionListener  {
                 coilerPanel.add(new JLabel("  "));  // A spacer
                 coilerPanel.add(new JLabel("Die:"));
                 coilerPanel.add(dieDisplay);
+
+
+                //JLabel guideDisplay = new JLabel(String.format("%.3f", (dies[0] + 10) / 1000));
+                JLabel guideDisplay = new JLabel("N/A");
+                coilerPanel.add(new JLabel("  "));  // A spacer
+                coilerPanel.add(new JLabel("Guide Die:"));
+                coilerPanel.add(guideDisplay);
+
                 coilerPanel.add(new JLabel("  "));  // A spacer
                 coilerPanel.add(new JLabel("ROA:"));
                 coilerPanel.add(roaDisplay);
@@ -194,6 +216,29 @@ public class GUI extends JFrame implements ActionListener  {
             coilerPanel.setLayout(new BoxLayout(coilerPanel, BoxLayout.Y_AXIS));
             contentPanel.add(coilerPanel);
         }
+
+        // Create summary panel
+        // Start with a spacer
+        JPanel spacer = new JPanel();
+        spacer.add(new JLabel("  "));
+        contentPanel.add(spacer);
+
+        // Creating summary panel...
+        JPanel summaryPanel = new JPanel();
+        summaryPanel.add(new JLabel("Summary:"));
+        summaryPanel.add(new JLabel("  ")); // A Spacer
+        summaryPanel.add(new JLabel("  ")); // A Spacer
+        summaryPanel.add(new JLabel("Total ROA: "));
+        JLabel totalROA = new JLabel(String.format("%.2f", MathFunctions.getReduction(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
+        summaryPanel.add(totalROA);
+        summaryPanel.add(new JLabel("  ")); // A Spacer
+        summaryPanel.add(new JLabel("Total Elongation: "));
+        JLabel totalElong = new JLabel(String.format("%.2f", MathFunctions.getElongation(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
+        summaryPanel.add(totalElong);
+
+        summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
+        contentPanel.add(summaryPanel);
+
         frame.add(contentPanel, BorderLayout.CENTER);
         frame.validate();
         frame.repaint();
