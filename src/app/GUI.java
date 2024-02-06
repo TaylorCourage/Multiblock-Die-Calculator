@@ -9,27 +9,31 @@ import javax.imageio.*;
 
 public class GUI extends JFrame implements ActionListener  {
     // Create static GUI objects
-    static JFrame frame;
-    static JPanel controlPanel;
-    static JPanel contentPanel;
+    static JFrame frame, warningFrame, helpFrame;
+    static JPanel controlPanel, contentPanel;
     static BorderLayout content;
     static GridLayout controls;
-    static JLabel machineLabel;
-    static JLabel initSizeLabel;
-    static JLabel finishSizeLabel;
 
     // Dynamic GUI objects
     static JComboBox machinePicker;
     static JTextField initSizeInput;
     static JTextField finishSizeInput;
     static int frameWidth;
+
+    static JCheckBoxMenuItem usePressureDie;
+    static JMenuItem openMenu, aboutMenu, exitMenu;
     JButton calculate, help;
+    static JButton closeButton;
     Machine machine;
 
     // These next few variables affect the size of our screen
-    static final int BASE_WIDTH = 240;
-    static final int WIDTH_MULTIPLIER = 80;
-    static final int BASE_HEIGHT = 375;
+    static final int BASE_WIDTH = 250;
+    static final int WIDTH_MULTIPLIER = 86;
+    static final int BASE_HEIGHT = 390;
+
+    // These are operational variables set by the user during runtime
+
+    boolean hasPressureDie = true;
 
     public void setupGUI(Machine machine) throws IOException {
         // Setup GUI objects
@@ -38,9 +42,6 @@ public class GUI extends JFrame implements ActionListener  {
         contentPanel = new JPanel();
         content = new BorderLayout();
         controls = new GridLayout(2, 4);
-        machineLabel = new JLabel("Machine:");
-        initSizeLabel = new JLabel("Start Size:");
-        finishSizeLabel = new JLabel("Finish Size:");
         machinePicker = new JComboBox();
         initSizeInput = new JTextField("0.216");
         finishSizeInput = new JTextField("0.130");
@@ -65,6 +66,7 @@ public class GUI extends JFrame implements ActionListener  {
         // Add things to the frame to display
         //frame.add(b1, BorderLayout.NORTH);
 
+        drawMenu();
         drawControls();
 
         frameWidth = BASE_WIDTH + (machine.numHeads * WIDTH_MULTIPLIER);
@@ -72,33 +74,82 @@ public class GUI extends JFrame implements ActionListener  {
         frame.setVisible(true);
     }
 
+    public void drawMenu() {
+        JMenuBar mb = new JMenuBar();
+
+        JMenu file = new JMenu("File");
+        JMenu setup = new JMenu("Setup");
+        JMenu view = new JMenu("View");
+
+        // Create our menu options /////////////////////
+        // FILE MENU
+        openMenu = new JMenuItem("Open...");
+        aboutMenu = new JMenuItem("About");
+        exitMenu = new JMenuItem("Exit");
+        // Add the options to the menus
+        file.add(openMenu);
+        file.addSeparator();
+        file.add(aboutMenu);
+        file.add(exitMenu);
+        //Add our action listeners so we can use the options
+        openMenu.addActionListener(this);
+        aboutMenu.addActionListener(this);
+        exitMenu.addActionListener(this);
+
+        // SETUP MENU
+        usePressureDie = new JCheckBoxMenuItem("Pressure Die");
+        usePressureDie.setState(true);
+        // Add the options to the menus
+        setup.add(usePressureDie);
+        //Add our action listeners so we can use the options
+        usePressureDie.addActionListener(this);
+
+        // VIEW MENU
+
+
+
+        //////////////////////////////////////////////////
+
+        // Add main menus to the bar
+        mb.add(file);
+        mb.add(setup);
+        //mb.add(view);
+
+        // Set our menu bar to the one we just made
+        frame.setJMenuBar(mb);
+    }
+
     public void drawControls() {
+        JLabel machineLabel = new JLabel("Machine:");
+        JLabel initSizeLabel = new JLabel("Start Size:");
+        JLabel finishSizeLabel = new JLabel("Finish Size:");
         // Add things to our control panel
         // Top row
+        controlPanel.add(new JLabel("  ")); // Spacer
         controlPanel.add(machineLabel);
         controlPanel.add(initSizeLabel);
         controlPanel.add(finishSizeLabel);
         controlPanel.add(calculate);
+        controlPanel.add(new JLabel("  ")); // Spacer
         // Bottom row
+        controlPanel.add(new JLabel("  ")); // Spacer
         controlPanel.add(machinePicker);
         controlPanel.add(initSizeInput);
         controlPanel.add(finishSizeInput);
         controlPanel.add(help);
+        controlPanel.add(new JLabel("  ")); // Spacer
 
         calculate.addActionListener(this);
         help.addActionListener(this);
         machinePicker.addActionListener(this);
 
         // Set control panel layout
-        controlPanel.setSize(400, 50);
+        //controlPanel.setSize(400, 50);
+        controlPanel.setPreferredSize(new Dimension(200, 50));
         controlPanel.setLayout(controls);
+        JPanel spacerPanel = new JPanel();
+        spacerPanel.setPreferredSize(new Dimension(50, 50));
         frame.add(controlPanel, BorderLayout.SOUTH);
-    }
-
-    public void guiResize(int numHeads){
-        frameWidth = BASE_WIDTH + (numHeads * WIDTH_MULTIPLIER);
-        frame.setSize(frameWidth, BASE_HEIGHT);
-        frame.repaint();
     }
 
     public void drawMachine(Machine machine, double[] dies) throws IOException {
@@ -120,8 +171,11 @@ public class GUI extends JFrame implements ActionListener  {
                 JLabel rodDisplay = new JLabel(String.format("%.3f", Order.sizes[Order.sizes.length - 1] / 1000), SwingConstants.CENTER);
                 headPanel.add(rod);
                 headPanel.add(new JLabel("  "));  // A spacer
+                headPanel.add(new JLabel("  "));  // A spacer
+                headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("Rod:"));
                 headPanel.add(rodDisplay);
+                headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
@@ -145,7 +199,7 @@ public class GUI extends JFrame implements ActionListener  {
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("Die:"));
                     headPanel.add(dieDisplay);
-                    if (i > Order.sizes.length - 3 /*&& pressureDie = true*/) {
+                    if (i > Order.sizes.length - 3 && hasPressureDie) {
                         JLabel guideDisplay = new JLabel(String.format("%.3f", (dies[i + 1] + 10) / 1000));
                         headPanel.add(new JLabel("  "));  // A spacer
                         headPanel.add(new JLabel("Press. Die:"));
@@ -225,6 +279,8 @@ public class GUI extends JFrame implements ActionListener  {
 
         // Creating summary panel...
         JPanel summaryPanel = new JPanel();
+        summaryPanel.add(new JLabel("  ")); // A Spacer
+        summaryPanel.add(new JLabel("  ")); // A Spacer
         summaryPanel.add(new JLabel("Summary:"));
         summaryPanel.add(new JLabel("  ")); // A Spacer
         summaryPanel.add(new JLabel("  ")); // A Spacer
@@ -244,24 +300,22 @@ public class GUI extends JFrame implements ActionListener  {
         frame.repaint();
     }
 
-    public void actionPerformed(ActionEvent e)  {
-        System.out.println("Action happened!");
-        if (e.getSource() == this.calculate) {
-            Order.createOrder(machine);
-            guiResize(Order.sizes.length);
-            try {
-                drawMachine(machine, Order.sizes);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else if (e.getSource() == this.help) {
-            helpWindow();
-        } else {
-            System.out.println("Machine change");
-            System.out.println(machinePicker.getSelectedItem().toString());
-        }
+    public void helpWindow() {
+        helpFrame = new JFrame("Die Calculator Help");
+        helpFrame.setSize(500, 300);
+        helpFrame.setVisible(true);
+    }
+    public void aboutWindow() {
+        JFrame aboutFrame = new JFrame("About Die Calculator");
+        aboutFrame.setSize(500, 300);
+        aboutFrame.setVisible(true);
     }
 
+    public void guiResize(int numHeads){
+        frameWidth = BASE_WIDTH + (numHeads * WIDTH_MULTIPLIER);
+        frame.setSize(frameWidth, BASE_HEIGHT);
+        frame.repaint();
+    }
     public static void setInitSize(double initSize) {
         initSize = initSize / 1000;
         String input = String.valueOf(initSize);
@@ -278,7 +332,6 @@ public class GUI extends JFrame implements ActionListener  {
         String input = String.valueOf(finishSize);
         finishSizeInput.setText(input);
     }
-
     public String getSelectedMachine(Machine machine) {
         for (int i = 0; i < machine.machineList.length; i++) {
             if (machinePicker.getSelectedItem().toString().equals(machine.machineList[i][1])) {
@@ -292,9 +345,63 @@ public class GUI extends JFrame implements ActionListener  {
         return "0";
     }
 
-    public void helpWindow() {
-        JFrame helpFrame = new JFrame("Die Calculator Help");
-        helpFrame.setSize(200, 200);
-        helpFrame.setVisible(true);
+    public static void overSizeWarning() {
+        warningFrame = new JFrame("Warning!");
+        JPanel warningPanel = new JPanel();
+        JLabel warning0 = new JLabel("Warning!");
+        JLabel warning1 = new JLabel("You are trying to create a setup that is outside established parameters.");
+        JLabel warning2 = new JLabel("A possible setup is displayed, but may not be ideal.");
+        JLabel warning3 = new JLabel("This could potentially cause damage to the equipment.");
+        JLabel warning4 = new JLabel("Proceed with caution.");
+        closeButton = new JButton("Understood.");
+
+
+        warningPanel.add(warning0);
+        warningPanel.add(warning1);
+        warningPanel.add(warning2);
+        warningPanel.add(warning3);
+        warningPanel.add(warning4);
+        warningFrame.add(warningPanel);
+
+        warningFrame.setSize(650, 175);
+        warningFrame.setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == this.calculate) {
+            Order.createOrder(machine);
+            guiResize(Order.sizes.length);
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (e.getSource() == this.help) {
+            helpWindow();
+        } else if (e.getSource() == usePressureDie) {
+            hasPressureDie = usePressureDie.getState();
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (e.getSource() == aboutMenu) {
+            aboutWindow();
+        } else if (e.getSource() == exitMenu) {
+            System.exit(0);
+        } else if (e.getSource() == closeButton) {
+            warningFrame.dispose();
+        } else {
+            for (int i = 0; i < machine.machineList.length; i++) {
+                if (machine.machineList[i][1].equals(machinePicker.getSelectedItem().toString())) {
+                    System.out.println("Machine changed to ID: " + machine.machineList[i][0]);
+                    try {
+                        machine.changeMachine(machine.machineList[i][0]);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
     }
 }

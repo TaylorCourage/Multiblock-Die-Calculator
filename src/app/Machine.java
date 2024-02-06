@@ -14,6 +14,13 @@ public class Machine {
     String[][] machineList;
 
     public void setupMachine(String machineID, XPath xpath, InputSource xml) throws Exception {
+        coilerMaxReduction = 0;
+        avgMaxReduction = 0;
+        taper = 0;
+        hasCoiler = false;
+        tapered = false;
+        numHeads = 0;
+
         // Get the machine name
         String xmlQueryPath = "/facility/machine[@id='" + machineID + "']/name";
         this.machineName = (String)xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
@@ -41,11 +48,13 @@ public class Machine {
             // Get head diameter
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/diameter";
             double dia = (double) xpath.evaluate(xmlQueryPath, xml, XPathConstants.NUMBER);
+            System.out.println("Dia: " + dia);
             int diameter = (int)dia;
 
             // Get head max reduction
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/maxReduction";
             double maxReduction = (double) xpath.evaluate(xmlQueryPath, xml, XPathConstants.NUMBER);
+            System.out.println("max reduc: " + maxReduction);
 
             // Get togglable status
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/maxReduction";
@@ -53,10 +62,13 @@ public class Machine {
 
             head[i] = new Head (diameter, maxReduction, togglable);
             avgMaxReduction += maxReduction;
+            System.out.println("avgMaxLoop: " + avgMaxReduction);
         }
         avgMaxReduction = avgMaxReduction / numHeads;
+        System.out.println("avgMaxFinal: " + avgMaxReduction);
 
         avgMaxReduction = Math.round(avgMaxReduction * 100.0) / 100.0;
+        System.out.println("avgMaxRounded: " + avgMaxReduction);
         System.out.println("Creating machine \"" + machineName + "\" with " + numHeads + " heads. Maximum ROA: " + avgMaxReduction + "%");
 
         // Setup the coiler if applicable
@@ -99,6 +111,7 @@ public class Machine {
                 if (numDies > numHeads) {
                     System.out.println("Warning! Setup outside set machine parameters! Are you sure your settings are correct?");
                     System.out.println("Temporarily overriding to display a possible setup.");
+                    GUI.overSizeWarning();
                     numDies--;
                     reduction = MathFunctions.getAverageReduction(startSize,preFinishSize,numDies);
                     reduction = Math.round(reduction * 100.0) / 100.0; // Round to 2 decimals
@@ -108,5 +121,12 @@ public class Machine {
             }
         }
         return numDies;
+    }
+
+    public void changeMachine (String machineID) throws Exception {
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xpath = xpf.newXPath();
+        InputSource xml = new InputSource("machines.xml");
+        setupMachine(machineID, xpath, xml);
     }
 }
