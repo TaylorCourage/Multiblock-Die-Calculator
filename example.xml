@@ -38,7 +38,7 @@
 		</head>
 		<coiler>
 			<diameter>26</diameter>
-			<maxReduction>11</maxReduction>
+			<maxReduction>10</maxReduction>
 		</coiler>
 	</machine>
 	<machine id="14">

@@ -1,13 +1,17 @@
 package app;
 
+import org.xml.sax.InputSource;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
-public class GUI extends JFrame implements ActionListener  {
+public class GUI extends JFrame implements ActionListener,KeyListener {
     // Create static GUI objects
     static JFrame frame, warningFrame, helpFrame;
     static JPanel controlPanel, contentPanel;
@@ -16,7 +20,7 @@ public class GUI extends JFrame implements ActionListener  {
 
     // Dynamic GUI objects
     static JComboBox machinePicker;
-    static JTextField initSizeInput, finishSizeInput;
+    static JTextField initSizeInput = new JTextField("0.000"), finishSizeInput = new JTextField("0.000");
     static int frameWidth;
 
     static JCheckBoxMenuItem usePressureDie, showGuides;
@@ -35,7 +39,7 @@ public class GUI extends JFrame implements ActionListener  {
 
     boolean hasPressureDie = true, showGuideDies = true;
 
-    public void setupGUI(Machine machine) throws IOException {
+    public void setupGUI(Machine machine) throws IOException  {
         // Setup GUI objects
         frame = new JFrame("Die Calculator");;
         controlPanel = new JPanel();
@@ -43,8 +47,6 @@ public class GUI extends JFrame implements ActionListener  {
         content = new BorderLayout();
         controls = new GridLayout(2, 4);
         machinePicker = new JComboBox();
-        initSizeInput = new JTextField("0.000");
-        finishSizeInput = new JTextField("0.000");
         this.machine = machine;
 
         // Kill the app when we close the window
@@ -99,17 +101,17 @@ public class GUI extends JFrame implements ActionListener  {
 
         // SETUP MENU
         usePressureDie = new JCheckBoxMenuItem("Pressure Die");
-        showGuides = new JCheckBoxMenuItem("Show Guide Dies");
         usePressureDie.setState(true);
-        showGuides.setState(true);
         // Add the options to the menus
         setup.add(usePressureDie);
-        setup.add(showGuides);
         //Add our action listeners so we can use the options
         usePressureDie.addActionListener(this);
-        showGuides.addActionListener(this);
 
         // VIEW MENU
+        showGuides = new JCheckBoxMenuItem("Show Guide Dies");
+        showGuides.setState(true);
+        view.add(showGuides);
+        showGuides.addActionListener(this);
 
 
 
@@ -118,7 +120,7 @@ public class GUI extends JFrame implements ActionListener  {
         // Add main menus to the bar
         mb.add(file);
         mb.add(setup);
-        //mb.add(view);
+        mb.add(view);
 
         // Set our menu bar to the one we just made
         frame.setJMenuBar(mb);
@@ -147,6 +149,9 @@ public class GUI extends JFrame implements ActionListener  {
         calculate.addActionListener(this);
         help.addActionListener(this);
         machinePicker.addActionListener(this);
+
+        initSizeInput.addKeyListener(this);
+        finishSizeInput.addKeyListener(this);
 
         // The following two focus listeners are designed to automatically highlight the contents
         // of the input fields when they are selected
@@ -198,9 +203,11 @@ public class GUI extends JFrame implements ActionListener  {
                 headPanel.add(rodDisplay);
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
+                if (showGuideDies) {
+                    headPanel.add(new JLabel("  "));  // A spacer
+                    headPanel.add(new JLabel("  "));  // A spacer
+                    headPanel.add(new JLabel("  "));  // A spacer
+                }
                 headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(new JLabel("  "));  // A spacer
                 contentPanel.add(headPanel);
@@ -327,11 +334,13 @@ public class GUI extends JFrame implements ActionListener  {
     public void helpWindow() {
         helpFrame = new JFrame("Die Calculator Help");
         helpFrame.setSize(500, 300);
+        helpFrame.setLocationRelativeTo(null);
         helpFrame.setVisible(true);
     }
     public void aboutWindow() {
         JFrame aboutFrame = new JFrame("About Die Calculator");
         aboutFrame.setSize(500, 300);
+        aboutFrame.setLocationRelativeTo(null);
         aboutFrame.setVisible(true);
     }
 
@@ -387,6 +396,7 @@ public class GUI extends JFrame implements ActionListener  {
         warningFrame.add(warningPanel);
 
         warningFrame.setSize(650, 175);
+        warningFrame.setLocationRelativeTo(null);
         warningFrame.setVisible(true);
     }
 
@@ -423,11 +433,59 @@ public class GUI extends JFrame implements ActionListener  {
             //Open new config file
             FileDialog dialog = new FileDialog((Frame)null, "Select File to Open");
             dialog.setMode(FileDialog.LOAD);
+            dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
-            String file = dialog.getFile();
+            String file = dialog.getDirectory() + dialog.getFile();
             dialog.dispose();
-            System.out.println(dialog.getDirectory() + file + " chosen.");
-            // Need to finish
+
+            // Now we basically completely setup from scratch. A lot of this is re-used from main
+            machine = new Machine();
+
+            // Open our machine parameters file
+            // Please see example.xml for instructions on how to create your own parameters file
+            XPathFactory xpf = XPathFactory.newInstance();
+            XPath xpath = xpf.newXPath();
+            //InputSource xml = new InputSource(GUI.configFilePath);
+            InputSource xml = new InputSource(file);
+
+            // Get list of machines
+            try {
+                machine.getMachines(xpath, xml);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            frame.dispose();
+            try {
+                setupGUI(machine);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            // Set machine ID to whatever the GUI says
+            String machineID = getSelectedMachine(machine);
+
+            // Create our machine
+            try {
+                machine.setupMachine(machineID, xpath, xml);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            guiResize(machine.numHeads);
+
+            // Create our order object
+            Order order = new Order();
+            Order.createOrder(machine);
+
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            guiResize(Order.sizes.length);
+
+
+
         } else if (e.getSource() == closeButton) {
             warningFrame.dispose();
         } else {  // This section is basically designed to follow our machine picker box
@@ -441,6 +499,31 @@ public class GUI extends JFrame implements ActionListener  {
                     }
                 }
             }
+            // Automatically re-draw the UI when a new machine is picked
+            Order.createOrder(machine);
+            guiResize(Order.sizes.length);
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
+
+    public void keyTyped(KeyEvent k) {}
+    public void keyPressed(KeyEvent k) {}
+    public void keyReleased(KeyEvent k) {
+        // Keyboard listener to listen for enter key
+        // This will allow the enter button to act like the calculate button
+        if (k.getKeyCode() == KeyEvent.VK_ENTER) {
+            Order.createOrder(machine);
+            guiResize(Order.sizes.length);
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
 }

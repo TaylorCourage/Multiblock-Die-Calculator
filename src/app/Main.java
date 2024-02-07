@@ -19,7 +19,7 @@ public class Main {
         // Please see example.xml for instructions on how to create your own parameters file
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xpath = xpf.newXPath();
-        InputSource xml = new InputSource(gui.configFilePath);
+        InputSource xml = new InputSource(GUI.configFilePath);
 
         // Get list of machines
         machine.getMachines(xpath, xml);

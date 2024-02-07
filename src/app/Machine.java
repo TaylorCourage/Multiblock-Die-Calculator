@@ -38,8 +38,6 @@ public class Machine {
         xmlQueryPath = "/facility/machine[@id='" + machineID + "']/hasCoiler";
         this.hasCoilerString = (String) xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
         this.hasCoiler = Objects.equals(this.hasCoilerString, "true");
-        System.out.println("COILER A::" + (boolean) xpath.evaluate(xmlQueryPath, xml, XPathConstants.BOOLEAN));
-        System.out.println("Coiler?: " + this.hasCoiler);
 
         // Check if we prefer tapered setups
         xmlQueryPath = "/facility/machine[@id='" + machineID + "']/tapered";
@@ -56,13 +54,11 @@ public class Machine {
             // Get head diameter
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/diameter";
             double dia = (double) xpath.evaluate(xmlQueryPath, xml, XPathConstants.NUMBER);
-            System.out.println("Dia: " + dia);
             int diameter = (int)dia;
 
             // Get head max reduction
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/maxReduction";
             double maxReduction = (double) xpath.evaluate(xmlQueryPath, xml, XPathConstants.NUMBER);
-            System.out.println("max reduc: " + maxReduction);
 
             // Get togglable status
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/head[@id='" + i + "']/maxReduction";
@@ -70,14 +66,10 @@ public class Machine {
 
             head[i] = new Head (diameter, maxReduction, togglable);
             avgMaxReduction += maxReduction;
-            System.out.println("avgMaxLoop: " + avgMaxReduction);
         }
         avgMaxReduction = avgMaxReduction / numHeads;
-        System.out.println("avgMaxFinal: " + avgMaxReduction);
 
         avgMaxReduction = Math.round(avgMaxReduction * 100.0) / 100.0;
-        System.out.println("avgMaxRounded: " + avgMaxReduction);
-        System.out.println("Creating machine \"" + machineName + "\" with " + numHeads + " heads. Maximum ROA: " + avgMaxReduction + "%");
 
         // Setup the coiler if applicable
         if (hasCoiler) {
@@ -90,7 +82,6 @@ public class Machine {
 
             Coiler coiler = new Coiler(coilerDiameter, maxCoilerReduction);
             coilerMaxReduction = coiler.maxReduction;
-            System.out.println("Setting up coiler with diameter " + coiler.diameter + "\". Maximum ROA: " + coilerMaxReduction + "%");
         }
     }
 
