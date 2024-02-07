@@ -4,12 +4,14 @@ import javax.xml.xpath.*;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
+import java.util.Objects;
+
 public class Machine {
     int numHeads;
-    boolean hasCoiler, tapered;
     double taper;
+    boolean tapered, hasCoiler;
     static double coilerMaxReduction, avgMaxReduction;
-    String machineName;
+    String machineName, hasCoilerString, taperedString;
 
     String[][] machineList;
 
@@ -17,6 +19,8 @@ public class Machine {
         coilerMaxReduction = 0;
         avgMaxReduction = 0;
         taper = 0;
+        hasCoilerString = "";
+        taperedString = "";
         hasCoiler = false;
         tapered = false;
         numHeads = 0;
@@ -32,11 +36,15 @@ public class Machine {
 
         // Get the coiler status
         xmlQueryPath = "/facility/machine[@id='" + machineID + "']/hasCoiler";
-        this.hasCoiler = (boolean) xpath.evaluate(xmlQueryPath, xml, XPathConstants.BOOLEAN);
+        this.hasCoilerString = (String) xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
+        this.hasCoiler = Objects.equals(this.hasCoilerString, "true");
+        System.out.println("COILER A::" + (boolean) xpath.evaluate(xmlQueryPath, xml, XPathConstants.BOOLEAN));
+        System.out.println("Coiler?: " + this.hasCoiler);
 
         // Check if we prefer tapered setups
         xmlQueryPath = "/facility/machine[@id='" + machineID + "']/tapered";
-        this.tapered = (boolean) xpath.evaluate(xmlQueryPath, xml, XPathConstants.BOOLEAN);
+        this.taperedString = (String) xpath.evaluate(xmlQueryPath, xml, XPathConstants.STRING);
+        this.tapered = Objects.equals(this.taperedString, "true");
         if (tapered) { // Get the taper percentage if so
             xmlQueryPath = "/facility/machine[@id='" + machineID + "']/taper";
             this.taper = (double) xpath.evaluate(xmlQueryPath, xml, XPathConstants.NUMBER);
