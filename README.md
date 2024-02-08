@@ -6,16 +6,19 @@ I work in the steel industry as the operator of a multiblock wiredraw machine. P
 
 ## Why?
 
-Calculating these reductions by hand is neigh-impossible without spending more time than it is worth. Add to that, and no offense to my fellow co-workers, the employees on a wiremill floor generally don't have the capability to make these calculations, and must rely on either software, or their supervisors to create and organize these setups. At our facility for example, there was only one management employee capable of creating these setups in a reasonable time frame, but problems would arise when this employee had vacation time and bespoke orders would come in from customers. This often left us scrambling to figure out what dies we can use, as you often cannot just toss in whatever dies 'feel' right without over-stressing the machine components.
+Calculating these reductions by hand is a very long and complex process, with several calculations that need to go together in the right order to build the correct die setup. Add to that, and no offense to my fellow co-workers, the employees on a wiremill floor generally aren't capable of making these calculations, at least not in the sort of time frame that financially makes sense, and rely on either software or higher-ups to create and organize these setups.
 
-## How does it work?
+## Operation
 
-So far this software is incredibly rudimentary, but functional where necessary. *Many* changes will come in the future to aid in operation. I would not recommend putting this software into service for quite some time, at least not until a user-friendly GUI is introduced.
+### For the machine operator:
 
-Machine parameters are stored in a `.xml` file, an example of which can be found in the root directory of this repository. You **must** rename this file to `machines.xml` before first-run, preferably after adding the parameters of your own equipment.
+This software could not be easier to use. Assuming your management/QA/IT team(s) have correctly configured it, you should simply be able to select your machine, enter your start and finish sizes, and have a setup that will be optimally designed for the chosen equipment. You can find less significant options, like the use of pressure dies or display of elongation, in the menus at the top of the window. If you need further assistance, your supervisor should be able to help.
 
-When running the software you will be asked for the ID of the machine you are using. This ID corresponds to the ID field in the `.xml` file. You will then be asked for an initial material diameter, then a final diameter. If the machine parameters were correctly set, it should generate a die setup that falls within those.
+### For management:
+
+For your operators to have the easiest time using the software, it is **highly** recommended that you make a copy of the `example.xml` file and rename it to `machines.xml`, configuring the settings within for the equipment your employees will be using. The structure of the file is fairly straightforward, should be easy to follow, and can be extended to a virtually infinite number of drwaing machines. Further documentation regarding the construction of this file will come in the future.
+
 
 ## Project Status
 
-It's pretty rough, I'm well aware. I need a lot more comments across all the code, for example. Things need to be cleaned up as well, especially following more object-oriented principles. There is no GUI yet, but one is planned. It doesn't handle tapers yet, and error handling for machines that don't exist isn't there yet. This might be a long-time labour of love considering it *works* for my purposes right now.
+From the first few commits this project has come quite a ways. We started with a very procedurally-oriented CLI program which slowly branched out into proper object-oriented philosophies, adding a user-friendly GUI and paving the way to becoming a better programmer. This has become a small labour of love designed to make my day-to-day life a little easier (isn't that the goal of all software?), if you would like to implement this in your own facility and need the help doing so, please feel free to reach out. I feel like it is at a point where it could be deployed to a shop floor, assuming that regular updates are performed to ensure you have the latest features and bug-fixes.

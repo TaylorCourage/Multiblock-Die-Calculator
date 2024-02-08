@@ -39,9 +39,12 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
     boolean hasPressureDie = true, showGuideDies = true;
 
+    // Version number, hopefully I remember to update this lol
+    String version = "0.8";
+
     public void setupGUI(Machine machine) throws IOException  {
         // Setup GUI objects
-        frame = new JFrame("Die Calculator");;
+        frame = new JFrame("Die Calculator");
         controlPanel = new JPanel();
         contentPanel = new JPanel();
         content = new BorderLayout();
@@ -273,7 +276,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
                 image = ImageIO.read(new File("graphics/coiler.png"));
                 JLabel dieLabel = new JLabel(new ImageIcon(image));
                 JLabel dieDisplay = new JLabel(String.format("%.3f", (Order.sizes[0] / 1000)), SwingConstants.CENTER);
-                JLabel roaDisplay = new JLabel(String.valueOf(Order.roas[0]) + "%", SwingConstants.CENTER);
+                JLabel roaDisplay = new JLabel((Order.roas[0]) + "%", SwingConstants.CENTER);
                 JLabel elongationDisplay = new JLabel(String.format("%.2f", Order.elongs[0]) + "%", SwingConstants.CENTER);
                 coilerPanel.add(dieLabel);
                 coilerPanel.add(new JLabel("  "));  // A spacer
@@ -333,13 +336,49 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
     public void helpWindow() {
         helpFrame = new JFrame("Die Calculator Help");
-        helpFrame.setSize(500, 300);
+        helpFrame.setLayout(new BorderLayout());
+        JLabel helpLabel = new JLabel(
+            "<html><body>" +
+            "<div align=\"center\"><h1>Die Calculator</h1>" +
+            "<h5>Version " + version + "</h5>" +
+            "<h2>How to use</h2></div>" +
+                    "<div><p>Assuming this software and config files were configured correctly...</p>" +
+                    "<h3>For the machine operator:</h3>" +
+                    "<p>  1. Select the machine you are setting up from the drop-down box</p>" +
+                    "<p>  2. Enter your start size (in inches) and finish size in the labelled boxes</p>" +
+                    "<p>  3. Press the \"Enter\" key on your keyboard or press the calculate button to get your die setup</p>" +
+                    "<p>&nbsp;</p>" +
+                    "<p>If you need to configure a pressure die (or not), you can do so through the \"Setup\" menu at the top of the window.</p>" +
+                    "<p>&nbsp;</p>" +
+                    "<p>&nbsp;</p>" +
+                    "<h3>For management:</h3>" +
+                    "<p>You can find instructions on configuring this software here: https://github.com/TaylorCourage</p>" +
+                    "<p>&nbsp;</p>" +
+                    "<p>&nbsp;</p>" +
+            "</div></html></body>"
+        );
+        helpFrame.add(new JLabel("     "), BorderLayout.WEST);  // Spacer
+        helpFrame.add(helpLabel, BorderLayout.CENTER);
+        helpFrame.add(new JLabel("     "), BorderLayout.EAST);  // Spacer
+        helpFrame.pack();
         helpFrame.setLocationRelativeTo(null);
         helpFrame.setVisible(true);
     }
     public void aboutWindow() {
         JFrame aboutFrame = new JFrame("About Die Calculator");
-        aboutFrame.setSize(500, 300);
+        aboutFrame.setLayout(new BorderLayout());
+        JLabel aboutLabel = new JLabel(
+            "<html><body>" +
+            "<div align=\"center\"><h1>Die Calculator</h1>" +
+            "<h5>Version " + version + "</h5>" +
+            "<h2>Made by Taylor Courage</h2>" +
+            "<h3>https://github.com/TaylorCourage</h3>" +
+            "</div></html></body>"
+        );
+        aboutFrame.add(new JLabel("     "), BorderLayout.WEST);  // Spacer
+        aboutFrame.add(aboutLabel, BorderLayout.CENTER);
+        aboutFrame.add(new JLabel("     "), BorderLayout.EAST);  // Spacer
+        aboutFrame.pack();
         aboutFrame.setLocationRelativeTo(null);
         aboutFrame.setVisible(true);
     }
@@ -430,7 +469,8 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         } else if (e.getSource() == exitMenu) {  // Exits the program
             System.exit(0);
         } else if (e.getSource() == openMenu) {  // Opens a new XML file to read machine settings from
-            //Open new config file
+            // Open new config file
+            // This is our file picker
             FileDialog dialog = new FileDialog((Frame)null, "Select File to Open");
             dialog.setMode(FileDialog.LOAD);
             dialog.setLocationRelativeTo(null);
@@ -473,7 +513,6 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             guiResize(machine.numHeads);
 
             // Create our order object
-            Order order = new Order();
             Order.createOrder(machine);
 
             try {
@@ -483,8 +522,6 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             }
 
             guiResize(Order.sizes.length);
-
-
 
         } else if (e.getSource() == closeButton) {
             warningFrame.dispose();
@@ -510,8 +547,9 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         }
     }
 
-    public void keyTyped(KeyEvent k) {}
-    public void keyPressed(KeyEvent k) {}
+// KEYBOARD LISTENER SECTION
+    public void keyTyped(KeyEvent k) {} // unused
+    public void keyPressed(KeyEvent k) {} // unused
     public void keyReleased(KeyEvent k) {
         // Keyboard listener to listen for enter key
         // This will allow the enter button to act like the calculate button

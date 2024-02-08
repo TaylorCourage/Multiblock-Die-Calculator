@@ -3,12 +3,8 @@ package app;
 import org.xml.sax.InputSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-import java.awt.event.*;
-import java.util.Scanner;
 
 public class Main {
-    GUI gui;
-    Machine machine;
     public static void main(String[] args) throws Exception {
         // Create the machine object
         Machine machine = new Machine();
@@ -33,14 +29,11 @@ public class Main {
         machine.setupMachine(machineID, xpath, xml);
 
         gui.guiResize(machine.numHeads);
-        // Create our order object
 
-        Order order = new Order();
+        // Create our order object
         Order.createOrder(machine);
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-        gui.drawMachine(machine, order.sizes);
-        gui.guiResize(order.sizes.length);
+        gui.drawMachine(machine, Order.sizes);
+        gui.guiResize(Order.sizes.length);
     }
 }

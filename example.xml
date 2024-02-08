@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE facility [
-		<!ENTITY maxReduction "22">
+		<!ENTITY maxReduction11 "22">
+		<!ENTITY maxReduction14 "30">
 		]>
 
 <facility xmlns:xsd="http://www.w3.org/2001/XMLSchema">
@@ -13,27 +14,27 @@
 		<taper></taper>
 		<head id="0">
 			<diameter>26</diameter>
-			<maxReduction>&maxReduction;</maxReduction>
+			<maxReduction>&maxReduction11;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="1">
 			<diameter>26</diameter>
-			<maxReduction>&maxReduction;</maxReduction>
+			<maxReduction>&maxReduction11;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="2">
 			<diameter>26</diameter>
-			<maxReduction>&maxReduction;</maxReduction>
+			<maxReduction>&maxReduction11;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="3">
 			<diameter>26</diameter>
-			<maxReduction>&maxReduction;</maxReduction>
+			<maxReduction>&maxReduction11;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="4">
 			<diameter>26</diameter>
-			<maxReduction>&maxReduction;</maxReduction>
+			<maxReduction>&maxReduction11;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<coiler>
@@ -49,37 +50,37 @@
 		<taper>3</taper>
 		<head id="0">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="1">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="2">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>false</isTogglable>
 		</head>
 		<head id="3">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="4">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="5">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<head id="6">
 			<diameter>22</diameter>
-			<maxReduction>30</maxReduction>
+			<maxReduction>&maxReduction14;</maxReduction>
 			<isTogglable>true</isTogglable>
 		</head>
 		<coiler>
