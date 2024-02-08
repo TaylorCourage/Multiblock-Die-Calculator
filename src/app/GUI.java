@@ -23,7 +23,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
     static JTextField initSizeInput = new JTextField("0.000"), finishSizeInput = new JTextField("0.000");
     static int frameWidth;
 
-    static JCheckBoxMenuItem usePressureDie, showGuides;
+    static JCheckBoxMenuItem usePressureDie, showGuides, showROA, showElong, showSummary;
     static JMenuItem openMenu, aboutMenu, exitMenu;
     JButton calculate, help;
     static JButton closeButton;
@@ -37,7 +37,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
     // These are operational variables set by the user during runtime
 
-    boolean hasPressureDie = true, showGuideDies = true;
+    boolean hasPressureDie = true, showGuideDies = true, showSummaryBool = true, showROAs = true, showElongs = true;
 
     // Version number, hopefully I remember to update this lol
     String version = "0.8";
@@ -112,9 +112,21 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
         // VIEW MENU
         showGuides = new JCheckBoxMenuItem("Show Guide Dies");
+        showROA = new JCheckBoxMenuItem("Show ROAs");
+        showElong = new JCheckBoxMenuItem("Show Elongations");
+        showSummary = new JCheckBoxMenuItem("Show Summary");
         showGuides.setState(true);
+        showROA.setState(true);
+        showElong.setState(true);
+        showSummary.setState(true);
         view.add(showGuides);
+        view.add(showROA);
+        view.add(showElong);
+        view.add(showSummary);
         showGuides.addActionListener(this);
+        showROA.addActionListener(this);
+        showElong.addActionListener(this);
+        showSummary.addActionListener(this);
 
 
 
@@ -200,19 +212,28 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
                 JLabel rodDisplay = new JLabel(String.format("%.3f", Order.sizes[Order.sizes.length - 1] / 1000), SwingConstants.CENTER);
                 headPanel.add(rod);
                 headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
+                if (showGuideDies)
+                    headPanel.add(new JLabel("  "));  // A spacer
+                if (showROAs)
+                    headPanel.add(new JLabel("  "));  // A spacer
+                if (showElongs) {
+                    headPanel.add(new JLabel("  "));  // A spacer
+                }
                 headPanel.add(new JLabel("Rod:"));
                 headPanel.add(rodDisplay);
-                headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
                 if (showGuideDies) {
+                    headPanel.add(new JLabel("  "));  // A spacer
+                    headPanel.add(new JLabel("  "));  // A spacer
+                }
+                if (showROAs) {
+                    headPanel.add(new JLabel("  "));  // A spacer
+                    headPanel.add(new JLabel("  "));  // A spacer
+                }
+                if (showElongs) {
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("  "));  // A spacer
                     headPanel.add(new JLabel("  "));  // A spacer
                 }
-                headPanel.add(new JLabel("  "));  // A spacer
-                headPanel.add(new JLabel("  "));  // A spacer
                 contentPanel.add(headPanel);
                 // HORIZONTAL SPACER
                 JPanel spacer = new JPanel();
@@ -243,12 +264,16 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
                             headPanel.add(guideDisplay);
                         }
                     }
-                    headPanel.add(new JLabel("  "));  // A spacer
-                    headPanel.add(new JLabel("ROA:"));
-                    headPanel.add(roaDisplay);
-                    headPanel.add(new JLabel("  "));  // A spacer
-                    headPanel.add(new JLabel("Elong:"));
-                    headPanel.add(elongationDisplay);
+                    if (showROAs) {
+                        headPanel.add(new JLabel("  "));  // A spacer
+                        headPanel.add(new JLabel("ROA:"));
+                        headPanel.add(roaDisplay);
+                    }
+                    if (showElongs) {
+                        headPanel.add(new JLabel("  "));  // A spacer
+                        headPanel.add(new JLabel("Elong:"));
+                        headPanel.add(elongationDisplay);
+                    }
                 } catch (IOException e) {
                     System.out.println("ERROR Image not found (die)");
                 }
@@ -289,14 +314,16 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
                     coilerPanel.add(new JLabel("Guide:"));
                     coilerPanel.add(guideDisplay);
                 }
-
-                coilerPanel.add(new JLabel("  "));  // A spacer
-                coilerPanel.add(new JLabel("ROA:"));
-                coilerPanel.add(roaDisplay);
-                coilerPanel.add(new JLabel("  "));  // A spacer
-                coilerPanel.add(new JLabel("Elong:"));
-                coilerPanel.add(elongationDisplay);
-
+                if (showROAs) {
+                    coilerPanel.add(new JLabel("  "));  // A spacer
+                    coilerPanel.add(new JLabel("ROA:"));
+                    coilerPanel.add(roaDisplay);
+                }
+                if (showElongs) {
+                    coilerPanel.add(new JLabel("  "));  // A spacer
+                    coilerPanel.add(new JLabel("Elong:"));
+                    coilerPanel.add(elongationDisplay);
+                }
             } catch (IOException e) {
                 System.out.println("ERROR Image not found (coiler)");
             }
@@ -304,34 +331,36 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             contentPanel.add(coilerPanel);
         }
 
-        // Create summary panel
-        // Start with a spacer
-        JPanel spacer = new JPanel();
-        spacer.add(new JLabel("  "));
-        contentPanel.add(spacer);
+        if (showSummaryBool) {
+            // Create summary panel
+            // Start with a spacer
+            JPanel spacer = new JPanel();
+            spacer.add(new JLabel("  "));
+            contentPanel.add(spacer);
 
-        // Creating summary panel...
-        JPanel summaryPanel = new JPanel();
-        summaryPanel.add(new JLabel("  ")); // A Spacer
-        summaryPanel.add(new JLabel("  ")); // A Spacer
-        summaryPanel.add(new JLabel("Summary"));
-        summaryPanel.add(new JLabel("__________________"));
-        summaryPanel.add(new JLabel("  ")); // A Spacer
-        summaryPanel.add(new JLabel("  ")); // A Spacer
-        summaryPanel.add(new JLabel("Total ROA: "));
-        JLabel totalROA = new JLabel(String.format("%.2f", MathFunctions.getReduction(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
-        summaryPanel.add(totalROA);
-        summaryPanel.add(new JLabel("  ")); // A Spacer
-        summaryPanel.add(new JLabel("Total Elongation: "));
-        JLabel totalElong = new JLabel(String.format("%.2f", MathFunctions.getElongation(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
-        summaryPanel.add(totalElong);
+            // Creating summary panel...
+            JPanel summaryPanel = new JPanel();
+            summaryPanel.add(new JLabel("  ")); // A Spacer
+            summaryPanel.add(new JLabel("  ")); // A Spacer
+            summaryPanel.add(new JLabel("Summary"));
+            summaryPanel.add(new JLabel("__________________"));
+            summaryPanel.add(new JLabel("  ")); // A Spacer
+            summaryPanel.add(new JLabel("  ")); // A Spacer
+            summaryPanel.add(new JLabel("Total ROA: "));
+            JLabel totalROA = new JLabel(String.format("%.2f", MathFunctions.getReduction(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
+            summaryPanel.add(totalROA);
+            summaryPanel.add(new JLabel("  ")); // A Spacer
+            summaryPanel.add(new JLabel("Total Elongation: "));
+            JLabel totalElong = new JLabel(String.format("%.2f", MathFunctions.getElongation(Order.sizes[Order.sizes.length - 1], Order.sizes[0])) + "%");
+            summaryPanel.add(totalElong);
 
-        summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
-        contentPanel.add(summaryPanel);
+            summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
+            contentPanel.add(summaryPanel);
+        }
 
         frame.add(contentPanel, BorderLayout.CENTER);
         frame.validate();
-        frame.repaint();
+        guiResize(Order.sizes.length);
     }
 
     public void helpWindow() {
@@ -385,6 +414,8 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
     public void guiResize(int numHeads){
         frameWidth = BASE_WIDTH + (numHeads * WIDTH_MULTIPLIER);
+        if (!showSummaryBool)
+            frameWidth -= 100;
         frame.setSize(frameWidth, BASE_HEIGHT);
         frame.repaint();
     }
@@ -439,6 +470,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         warningFrame.setVisible(true);
     }
 
+// BUTTON LISTENER SECTION
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.calculate) {
             Order.createOrder(machine);
@@ -459,6 +491,27 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             }
         } else if (e.getSource() == showGuides) {  // Guide die menu option
             showGuideDies = showGuides.getState();
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (e.getSource() == showROA) {  // Guide die menu option
+            showROAs = showROA.getState();
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (e.getSource() == showElong) {  // Guide die menu option
+            showElongs = showElong.getState();
+            try {
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else if (e.getSource() == showSummary) {  // Guide die menu option
+            showSummaryBool = showSummary.getState();
             try {
                 drawMachine(machine, Order.sizes);
             } catch (IOException ex) {
@@ -528,7 +581,6 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         } else {  // This section is basically designed to follow our machine picker box
             for (int i = 0; i < machine.machineList.length; i++) {
                 if (machine.machineList[i][1].equals(machinePicker.getSelectedItem().toString())) {
-                    System.out.println("Machine changed to ID: " + machine.machineList[i][0]);
                     try {
                         machine.changeMachine(machine.machineList[i][0]);
                     } catch (Exception ex) {
@@ -563,5 +615,4 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             }
         }
     }
-
 }
