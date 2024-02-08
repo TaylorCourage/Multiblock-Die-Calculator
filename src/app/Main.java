@@ -27,6 +27,7 @@ public class Main {
 
         // Create our machine
         machine.setupMachine(machineID, xpath, xml);
+        gui.setupGUI(machine);
 
         gui.guiResize(machine.numHeads);
 

@@ -13,19 +13,19 @@ import javax.xml.xpath.XPathFactory;
 
 public class GUI extends JFrame implements ActionListener,KeyListener {
     // Create static GUI objects
-    static JFrame frame, warningFrame, helpFrame;
+    static JFrame frame, warningFrame, helpFrame, coilerReductionFrame;
     static JPanel controlPanel, contentPanel;
     static BorderLayout content;
     static GridLayout controls;
 
     // Dynamic GUI objects
     static JComboBox machinePicker;
-    static JTextField initSizeInput = new JTextField("0.000"), finishSizeInput = new JTextField("0.000");
+    static JTextField initSizeInput = new JTextField("0.000"), finishSizeInput = new JTextField("0.000"), coilerReductionInput;
     static int frameWidth;
 
     static JCheckBoxMenuItem usePressureDie, showGuides, showROA, showElong, showSummary;
-    static JMenuItem openMenu, aboutMenu, exitMenu;
-    JButton calculate, help;
+    static JMenuItem openMenu, aboutMenu, exitMenu, setCoilerReduction;
+    JButton calculate, help, coilerReductionAcceptButton;
     static JButton closeButton;
     static String configFilePath = "machines.xml";
     Machine machine;
@@ -71,8 +71,8 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         // Add things to the frame to display
         //frame.add(b1, BorderLayout.NORTH);
 
-        drawMenu();
         drawControls();
+        drawMenu();
 
         frameWidth = BASE_WIDTH + (machine.numHeads * WIDTH_MULTIPLIER);
         frame.setSize(frameWidth,BASE_HEIGHT);
@@ -104,11 +104,19 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
         // SETUP MENU
         usePressureDie = new JCheckBoxMenuItem("Pressure Die");
+        setCoilerReduction = new JMenuItem("Coiler Reduction");
         usePressureDie.setState(true);
+        if (machine.hasCoiler) {
+            setCoilerReduction.setEnabled(true);
+        } else {
+            setCoilerReduction.setEnabled(false);
+        }
         // Add the options to the menus
         setup.add(usePressureDie);
+        setup.add(setCoilerReduction);
         //Add our action listeners so we can use the options
         usePressureDie.addActionListener(this);
+        setCoilerReduction.addActionListener(this);
 
         // VIEW MENU
         showGuides = new JCheckBoxMenuItem("Show Guide Dies");
@@ -210,6 +218,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
                 image = ImageIO.read(new File("graphics/rod.png"));
                 JLabel rod = new JLabel(new ImageIcon(image));
                 JLabel rodDisplay = new JLabel(String.format("%.3f", Order.sizes[Order.sizes.length - 1] / 1000), SwingConstants.CENTER);
+                headPanel.add(new JLabel("  "));  // A spacer
                 headPanel.add(rod);
                 headPanel.add(new JLabel("  "));  // A spacer
                 if (showGuideDies)
@@ -411,6 +420,26 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         aboutFrame.setLocationRelativeTo(null);
         aboutFrame.setVisible(true);
     }
+    public void coilerWindow() {
+        coilerReductionFrame = new JFrame("Set Custom Coiler Reduction");
+        JPanel coilerReductionPanel = new JPanel();
+        JLabel coilerReductionLabel = new JLabel("Set custom coiler reduction(%):");
+        coilerReductionInput = new JTextField();
+        coilerReductionAcceptButton = new JButton("Accept");
+
+        coilerReductionPanel.setLayout(new BoxLayout(coilerReductionPanel, BoxLayout.Y_AXIS));
+        coilerReductionPanel.add(coilerReductionLabel);
+        coilerReductionPanel.add(coilerReductionInput);
+        coilerReductionPanel.add(coilerReductionAcceptButton);
+
+        coilerReductionAcceptButton.addActionListener(this);
+
+        coilerReductionFrame.add(coilerReductionPanel);
+
+        coilerReductionFrame.pack();
+        coilerReductionFrame.setLocationRelativeTo(null);
+        coilerReductionFrame.setVisible(true);
+    }
 
     public void guiResize(int numHeads){
         frameWidth = BASE_WIDTH + (numHeads * WIDTH_MULTIPLIER);
@@ -482,6 +511,10 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             }
         } else if (e.getSource() == this.help) {
             helpWindow();
+        } else if (e.getSource() == setCoilerReduction) {
+            coilerWindow();
+        } else if (e.getSource() == aboutMenu) {  // Opens the about menu
+            aboutWindow();
         } else if (e.getSource() == usePressureDie) { // Pressure Die Menu option
             hasPressureDie = usePressureDie.getState();
             try {
@@ -517,8 +550,6 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-        } else if (e.getSource() == aboutMenu) {  // Opens the about menu
-            aboutWindow();
         } else if (e.getSource() == exitMenu) {  // Exits the program
             System.exit(0);
         } else if (e.getSource() == openMenu) {  // Opens a new XML file to read machine settings from
@@ -578,6 +609,17 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
 
         } else if (e.getSource() == closeButton) {
             warningFrame.dispose();
+        } else if (e.getSource() == coilerReductionAcceptButton) {  // Opens the about menu
+            Machine.coilerMaxReduction = Double.parseDouble(coilerReductionInput.getText());
+            Order.createOrder(machine);
+            guiResize(Order.sizes.length);
+            try {
+                drawMenu();
+                drawMachine(machine, Order.sizes);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            coilerReductionFrame.dispose();
         } else {  // This section is basically designed to follow our machine picker box
             for (int i = 0; i < machine.machineList.length; i++) {
                 if (machine.machineList[i][1].equals(machinePicker.getSelectedItem().toString())) {
@@ -592,6 +634,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             Order.createOrder(machine);
             guiResize(Order.sizes.length);
             try {
+                drawMenu();
                 drawMachine(machine, Order.sizes);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
