@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import javax.imageio.*;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
@@ -27,7 +29,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
     static JMenuItem openMenu, aboutMenu, exitMenu, setCoilerReduction;
     JButton calculate, help, coilerReductionAcceptButton;
     static JButton closeButton;
-    static String configFilePath = "machines.xml";
+    static String configFilePath = "./machines.xml";
     Machine machine;
 
     // These next few variables affect the size of our screen
@@ -106,11 +108,7 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
         usePressureDie = new JCheckBoxMenuItem("Pressure Die");
         setCoilerReduction = new JMenuItem("Coiler Reduction");
         usePressureDie.setState(true);
-        if (machine.hasCoiler) {
-            setCoilerReduction.setEnabled(true);
-        } else {
-            setCoilerReduction.setEnabled(false);
-        }
+        setCoilerReduction.setEnabled(machine.hasCoiler);
         // Add the options to the menus
         setup.add(usePressureDie);
         setup.add(setCoilerReduction);
@@ -571,6 +569,17 @@ public class GUI extends JFrame implements ActionListener,KeyListener {
             XPath xpath = xpf.newXPath();
             //InputSource xml = new InputSource(GUI.configFilePath);
             InputSource xml = new InputSource(file);
+
+            // If a new config is opened it shall become the default.
+            File input = new File(file);
+            File output = new File("./machines.xml");
+
+            // Move the selected file
+            try {
+                Files.copy(input.toPath(), output.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
 
             // Get list of machines
             try {
